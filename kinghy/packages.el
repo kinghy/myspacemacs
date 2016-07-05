@@ -58,7 +58,10 @@ Each entry is either:
       - A list beginning with the symbol `recipe' is a melpa
         recipe.  See: https://github.com/milkypostman/melpa#recipe-format")
 
-
+(with-eval-after-load 'org
+  ;; here goes your Org config :)
+  ;; ....
+  
 (defun kinghy/org-summary-todo (n-done n-not-done)
   "Switch entry to DONE when all subentries are done, to TODO otherwise."
   (let (org-log-done org-log-states) ; turn off logging
@@ -138,13 +141,31 @@ Each entry is either:
    (quote
     (("inbox.org" :level . 1)("finished.org":level . 1) ("task.org":level . 1) ("project.org":level . 1) ("trash.org":level . 1))
     )))
-
 ;; 快速打开inbox
 (defun inbox() (interactive) (find-file "~/Coding/org/gtd/inbox.org"))
+;;; packages.el ends here
+(setq org-bullets-bullet-list '("♥" "◆" "♠" "♣"))
+;;♥ ● ◇ ✚ ✜  ♦ ☢ ❀ ◆ ◖ ▶
+  )
  
+;;set transparent effect
+
+(global-set-key [(f12)] 'loop-alpha)
+(setq alpha-list '((0 0) (100 100))) 
+(defun loop-alpha ()
+(interactive)
+(let ((h (car alpha-list)))                ;; head value will set to
+      ((lambda (a ab)
+               (set-frame-parameter (selected-frame) 'alpha (list a ab))
+               (add-to-list 'default-frame-alist (cons 'alpha (list a ab)))
+               ) (car h) (car (cdr h)))
+      (setq alpha-list (cdr (append alpha-list (list h))))
+      )
+)
+
 
 ;;开机自动显示日程表
 ;;(org-agenda-list t)
 ;;关闭其它窗口
 ;;(delete-other-windows)
-;;; packages.el ends here
+
