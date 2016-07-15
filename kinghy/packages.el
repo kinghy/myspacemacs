@@ -187,7 +187,8 @@ Each entry is either:
 (defun kinghy/retrieve-chrome-current-tab-url()
   "Get the URL of the active tab of the first window"
   (interactive)
-  (let ((result (do-applescript
+
+  (let ((link (do-applescript
                  (concat
                   "set frontmostApplication to path to frontmost application\n"
                   "tell application \"Google Chrome\"\n"
@@ -198,7 +199,7 @@ Each entry is either:
                   "set links to {}\n"
                   "copy theResult to the end of links\n"
                   "return links as string\n")))
-        (result2 (do-applescript
+        (title (do-applescript
                   (concat
                    "set frontmostApplication to path to frontmost application\n"
                    "tell application \"Google Chrome\"\n"
@@ -206,11 +207,24 @@ Each entry is either:
                    "	set theResult to (get theUrl) \n"
                    "end tell\n"
                    "activate application (frontmostApplication as text)\n"
-                   "return theResult as string\n"))))
-    (format "[[%s][%s]]" (s-chop-suffix "\"" (s-chop-prefix "\"" result)) result2) ))
+                   "return theResult as string\n")))
+        ) (let (
+                (result-link (read-from-minibuffer "Checkout Link From Chrome:" link))
+                (result-title (read-from-minibuffer "Checkout Title From Chrome:" title)))
+            (format "[[%s][%s]]" (s-chop-suffix "\"" (s-chop-prefix "\"" result-link)) result-title))))
+
 (global-set-key "\C-cku" 'kinghy/insert-chrome-current-tab-url)
+
+
+
 ;(switch-to-buffer-other-window "*test*")
-;(progn
+ ;(progn
 ;  (switch-to-buffer-other-window "*test2*")
 ;  (shell))
 
+;; 快速打开配置文件
+(defun open-packages-file()
+  (interactive)
+  (find-file "~/.emacs.d/private/kinghy/packages.el"))
+
+(global-set-key "\C-ckp" 'open-packages-file)
