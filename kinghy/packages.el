@@ -169,3 +169,48 @@ Each entry is either:
 ;;关闭其它窗口
 ;;(delete-other-windows)
 
+;;(eval-after-load 'org-agenda
+;;  (progn
+;;    (message "1234")
+;;    (org-agenda-list t)))
+
+(split-window-vertically)
+(other-window 1)
+(shell)
+(other-window 0)
+
+(defun kinghy/insert-chrome-current-tab-url()
+  "Get the URL of the active tab of the first window"
+  (interactive)
+  (insert (kinghy/retrieve-chrome-current-tab-url)))
+
+(defun kinghy/retrieve-chrome-current-tab-url()
+  "Get the URL of the active tab of the first window"
+  (interactive)
+  (let ((result (do-applescript
+                 (concat
+                  "set frontmostApplication to path to frontmost application\n"
+                  "tell application \"Google Chrome\"\n"
+                  "	set theUrl to get URL of active tab of first window\n"
+                  "	set theResult to (get theUrl) \n"
+                  "end tell\n"
+                  "activate application (frontmostApplication as text)\n"
+                  "set links to {}\n"
+                  "copy theResult to the end of links\n"
+                  "return links as string\n")))
+        (result2 (do-applescript
+                  (concat
+                   "set frontmostApplication to path to frontmost application\n"
+                   "tell application \"Google Chrome\"\n"
+                   "	set theUrl to get title of active tab of first window\n"
+                   "	set theResult to (get theUrl) \n"
+                   "end tell\n"
+                   "activate application (frontmostApplication as text)\n"
+                   "return theResult as string\n"))))
+    (format "[[%s][%s]]" (s-chop-suffix "\"" (s-chop-prefix "\"" result)) result2) ))
+(global-set-key "\C-cku" 'kinghy/insert-chrome-current-tab-url)
+;(switch-to-buffer-other-window "*test*")
+;(progn
+;  (switch-to-buffer-other-window "*test2*")
+;  (shell))
+
